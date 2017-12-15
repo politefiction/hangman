@@ -4,9 +4,10 @@
 	<% if @answer1.nil? and game.nil? %>
 		<h2>Welcome to Hangman!</h2>
 		<p>
-		Welcome to Hangman! Would you like to load your previous game? (Y/N)
+		Welcome to Hangman! Would you like to load your previous game?
 		<form>
-			<input type="text" name="answer1">
+			<input type="radio" name="answer1" value="yes">Yes
+			<input type="radio" name="answer1" value="no">No
 			<input type="submit">
 		</form>
 		</p>
@@ -20,7 +21,6 @@
 		<p><%= game.hidden_word.join(" ") %></p>
 		<% if game.tries > 0 %>
 			<p>Please enter a letter:
-				<!-- Is functional, but need to incorporate messages -->
 				<form action="/" method="post">
 					<input type="text" name="guess" value="<%= @guess %>">
 					<input type="submit">
@@ -37,6 +37,16 @@
 			<% unless game.already_guessed.empty? %>
 				<p>Letters guessed: <%= game.already_guessed.join(", ") %></p>
 			<% end %>
+
+		<% end %>
+		<p><% if game_over? %></p>
+			<p>Would you like to play again?</p>
+			<form>
+				<input type="radio" name="answer2" value="yes">Yes
+				<input type="radio" name="answer2" value="no">No
+				<input type="submit">
+			</form>
+			<%= @message3 if @message3 %>
 		<% end %>
 	<% end %>
 

@@ -9,28 +9,22 @@ set :game, nil
 enable :sessions
 
 
-# Okay, okay: so, parameters in the html are defined by what I put into the forms. That's why
-# params["game"] was nil. Got it.
-
 get '/' do
 	@answer1 = params["answer1"]
 	@message2 = session.delete(:message)
 	settings.game ||= start_game(@answer1) if @answer1
-	#@message2
+	@answer2 = params["answer2"]
+	play_again?(@answer2) if @answer2
 	erb :index , :locals => { :game => settings.game }
 end
 
 def start_game(answer)
-	if answer[0].downcase == "y"
+	if answer == "yes"
 		@message1 = "Previous save loaded."
 		Hangman.from_json
-	elsif answer[0].downcase == "n"
+	else
 		@message1 = "New game loaded."
 		Hangman.new
-	else
-		@message1 = "Sorry, unable to recognize your response. Please try again."
-		nil
-		#redirect "/"
 	end
 end
 
@@ -39,7 +33,9 @@ post '/' do
 	@game = settings.game
 	@game.enter_guess(@guess)
 	session[:message] = assign_message
-	@game.already_guessed << @guess unless @guess == "save"
+	unless @guess == "save" or @game.already_guessed.include? @guess
+		@game.already_guessed << @guess 
+	end
 	redirect "/?guess=#{@guess}" if @guess
 end
 
@@ -57,11 +53,24 @@ def assign_message
 	end
 end
 
-# Find a way to implement this or something similar next time
-def play_again?
-	@answer2 = params["answer2"]
-	settings.game = Hangman.new if @answer2 == "yes"
-	"Thanks for playing!" if @answer2 == "no"
+def game_over?
+	if settings.game
+		if (settings.game.tries == 0) or (!settings.game.hidden_word.include? "_")
+			true
+		else
+			false
+		end
+	else
+		false
+	end
+end
+
+def play_again?(answer)
+	if answer == "yes"
+		settings.game = Hangman.new 
+	else
+		@message3 = "Thanks for playing!"
+	end
 end
 
 class Hangman
