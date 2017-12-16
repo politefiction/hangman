@@ -1,44 +1,51 @@
 <html>
-<head></head>
+<head>
+	<link rel="stylesheet" type="text/css" href="<%= url("/hangman.css") %>" />
+</head>
 <body>
 	<% if @answer1.nil? and game.nil? %>
 		<h2>Welcome to Hangman!</h2>
-		<p>
-		Welcome to Hangman! Would you like to load your previous game?
-		<form>
-			<input type="radio" name="answer1" value="yes">Yes
-			<input type="radio" name="answer1" value="no">No
-			<input type="submit">
-		</form>
-		</p>
+		<div class="begin">
+			<p>Would you like to load your previous game?</p>
+			<form>
+				<input type="radio" name="answer1" value="yes">Yes
+				<input type="radio" name="answer1" value="no">No
+				<input type="submit">
+			</form>
+		</div>
 	<% end %>
 	<p><%= @message1 if @message1 %></p>
 
 	<% if game %>
 		<p><%= @message2 if @message2 %></p>
 		<br>
-		<% game.hide_word if game.hidden_word.empty? %>
-		<p><%= game.hidden_word.join(" ") %></p>
-		<% if game.tries > 0 %>
-			<p>Please enter a letter:
-				<form action="/" method="post">
-					<input type="text" name="guess" value="<%= @guess %>">
-					<input type="submit">
-				</form>
-			</p>
-		<% end %>
+		<img src="images/<%= @image %>">
+		<p><%= @files %></p>
 		<br>
-		<% if !game.hidden_word.include? "_" %>
-			<p>You've got it! The correct word was "<%= game.target %>"!</p>
-		<% elsif game.tries == 0 %>
-			<p>Sorry, the correct word was "<%= game.target %>"!</p>
-		<% else %>
-			<p>Incorrect guesses remaining: <%= game.tries %></p>
-			<% unless game.already_guessed.empty? %>
-				<p>Letters guessed: <%= game.already_guessed.join(", ") %></p>
+		<div class="guessbox">
+			<% game.hide_word if game.hidden_word.empty? %>
+			<p><%= game.hidden_word.join(" ") %></p>
+			<% if game.tries > 0 %>
+				<p>Please enter a letter:
+					<form action="/" method="post">
+						<input type="text" name="guess" value="<%= @guess %>">
+						<input type="submit">
+					</form>
+				</p>
 			<% end %>
+			<br>
+			<% if !game.hidden_word.include? "_" %>
+				<p>You've got it! The correct word was "<%= game.target %>"!</p>
+			<% elsif game.tries == 0 %>
+				<p>Sorry, the correct word was "<%= game.target %>"!</p>
+			<% else %>
+				<p>Incorrect guesses remaining: <%= game.tries %></p>
+				<% unless game.already_guessed.empty? %>
+					<p>Letters guessed: <%= game.already_guessed.join(", ") %></p>
+				<% end %>
 
-		<% end %>
+			<% end %>
+		</div>
 		<p><% if game_over? %></p>
 			<p>Would you like to play again?</p>
 			<form>

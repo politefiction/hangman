@@ -3,8 +3,6 @@ require 'sinatra/reloader'
 require 'json'
 require 'erb'
 
-#set :save_game, Hangman.from_json
-#set :new_game, Hangman.new
 set :game, nil
 enable :sessions
 
@@ -53,6 +51,12 @@ def assign_message
 	end
 end
 
+def select_image
+	files = Dir.entries("public/images")
+	files.select! { |file| file.include? "hangman"}.sort!
+	@image = files[0]
+end
+
 def game_over?
 	if settings.game
 		if (settings.game.tries == 0) or (!settings.game.hidden_word.include? "_")
@@ -67,6 +71,7 @@ end
 
 def play_again?(answer)
 	if answer == "yes"
+		@message1 = "New game loaded."
 		settings.game = Hangman.new 
 	else
 		@message3 = "Thanks for playing!"
@@ -105,7 +110,7 @@ class Hangman
 		@target.length.times { @hidden_word.push("_") }
 	end
 
-	def run_game
+	def run_game # Remove?
 		puts "Starting new game. You can save your game at any point by entering \"save\"."
 		hide_word
 		puts; process_guess
@@ -113,14 +118,11 @@ class Hangman
 	end
 
 	def save_game
-		#puts "Saving game..."
 		self.to_json
 		"Game saved."
 	end
 
-	def process_guess(guess)
-		#display_tracker
-		#puts @hidden_word.join(" "); puts
+	def process_guess(guess) # Remove?
 		unless @hidden_word.include? "_"
 			"You've got it! The word was #{@target}!"
 		else
@@ -128,18 +130,11 @@ class Hangman
 		end
 	end
 
-	def display_tracker # Incorporated into erb
-		"Incorrect guesses remaining: #{@tries}"
-		"Letters guessed: #{@already_guessed}" unless @already_guessed.empty?
-	end
-
 	def choose_letter(guess)
 		pos = 0
-		#check_against_target(guess, pos)
 		if @already_guessed.include? guess
 			"Sorry, already guessed! Please try again."
 		else
-			#@already_guessed.push(guess) unless guess == "save"
 			check_against_target(guess, pos)
 		end
 	end
@@ -147,8 +142,7 @@ class Hangman
 	def enter_guess(guess)
 		if @tries > 0
 			choose_letter(guess)
-			#process_guess(guess)
-		else
+		else # Do I need this?
 			"Sorry, the correct word was #{@target}!"
 		end
 	end
@@ -159,12 +153,12 @@ class Hangman
 			save_game
 		elsif @target.include? guess
 			update_hidden_word(guess, pos)
-			"Correct!"
+			#"Correct!"
 		else
 			@tries -= 1
-			"Sorry, that guess is incorrect!"
+			#"Sorry, that guess is incorrect!"
 		end
-		"You've got it! The word was #{@target}!" unless @hidden_word.include? "_"
+		#"You've got it! The word was #{@target}!" unless @hidden_word.include? "_"
 	end
 
 	def update_hidden_word(guess, pos)
@@ -197,11 +191,9 @@ class Hangman
 		save.already_guessed = data['already_guessed']
 		save.hidden_word = data['hidden_word']
 		save
-		#puts save.hidden_word.join (" ")
-		#save.process_guess
 	end
 
-	def self.play_again?
+	def self.play_again? # Remove?
 		puts "Would you like to play again? (Y/N)"
 		answer = gets.chomp.downcase
 		if answer[0] == "y"
