@@ -1,6 +1,7 @@
 <html>
 <head>
 	<link rel="stylesheet" type="text/css" href="<%= url("/hangman.css") %>" />
+	<title>Hangman</title>
 </head>
 <body>
 	<% if @answer1.nil? and game.nil? %>
@@ -14,47 +15,42 @@
 			</form>
 		</div>
 	<% end %>
-	<p><%= @message1 if @message1 %></p>
-
+	<p class="message"><%= @message1 if @message1 %></p>
 	<% if game %>
-		<p><%= @message2 if @message2 %></p>
+		<p class="message"><%= @message2 if @message2 %></p>
 		<br>
-		<img src="<%= @image %>">
-		<p>Current image: <%= @image %></p>
-		<br>
-		<div class="guessbox">
-			<% game.hide_word if game.hidden_word.empty? %>
-			<p><%= game.hidden_word.join(" ") %></p>
-			<% if game.tries < 6 %>
-				<p>Please enter a letter:
-					<form action="/" method="post">
-						<input type="text" name="guess" value="<%= @guess %>">
-						<input type="submit">
-					</form>
-				</p>
-			<% end %>
-			<br>
-			<% if !game.hidden_word.include? "_" %>
-				<p>You've got it! The correct word was "<%= game.target %>"!</p>
-			<% elsif game.tries == 6 %>
-				<p>Sorry, the correct word was "<%= game.target %>"!</p>
-			<% else %>
-				<p>Incorrect guesses: <%= game.tries %></p>
-				<% unless game.already_guessed.empty? %>
+		<div id="game-box">
+			<div class="guessbox">
+				<% game.hide_word if game.hidden_word.empty? %>
+				<p id="hidden-word"><%= game.hidden_word.join(" ") %></p>
+				<% unless game_over? %>
+					<p>Please enter a letter:
+						<form action="/" method="post">
+							<input type="text" name="guess" value="<%= @guess %>" autofocus="autofocus" />
+							<input type="submit">
+						</form>
+					</p>
+				<% end %>
+				<br>
+				<% if !game.hidden_word.include? "_" %>
+					<p>You've got it! The correct word was <strong><%= game.target %></strong>!</p>
+				<% elsif game.tries == 6 %>
+					<p>Sorry, the correct word was "<%= game.target %>"!</p>
+				<% else %>
 					<p>Letters guessed: <%= game.already_guessed.join(", ") %></p>
 				<% end %>
-
+			</div>
+			<img src="<%= @image %>" class="guessbox" />
+			<% if game_over? %>
+				<p>Would you like to play again?</p>
+				<form>
+					<input type="radio" name="answer2" value="yes">Yes
+					<input type="radio" name="answer2" value="no">No
+					<input type="submit">
+				</form>
+				<%= @message3 if @message3 %>
 			<% end %>
 		</div>
-		<p><% if game_over? %></p>
-			<p>Would you like to play again?</p>
-			<form>
-				<input type="radio" name="answer2" value="yes">Yes
-				<input type="radio" name="answer2" value="no">No
-				<input type="submit">
-			</form>
-			<%= @message3 if @message3 %>
-		<% end %>
 	<% end %>
 
 </body>

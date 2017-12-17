@@ -32,7 +32,6 @@ post '/' do
 	@game = settings.game
 	@game.enter_guess(@guess)
 	session[:message] = assign_message
-	#@image = "images/hangman0.jpg"
 	unless @guess == "save" or @game.already_guessed.include? @guess
 		@game.already_guessed << @guess 
 	end
@@ -97,43 +96,16 @@ class Hangman
 	end
 
 
-	def self.load_game?
-		puts "Welcome to Hangman! Would you like to load your previous game? (Y/N)"
-		answer = gets.chomp.downcase
-		if answer[0] == "y"
-			puts "Loading game. You can save your game at any point by entering \"save\"."
-			self.from_json; self.play_again?
-		elsif answer[0] == "n"
-			self.new.run_game
-		else
-			puts "Sorry, unable to recognize your response."
-			self.load_game?
-		end
-	end
-
 	def hide_word
 		@target.length.times { @hidden_word.push("_") }
 	end
 
-	def run_game # Remove?
-		puts "Starting new game. You can save your game at any point by entering \"save\"."
-		hide_word
-		puts; process_guess
-		Hangman.play_again?
-	end
 
 	def save_game
 		self.to_json
 		"Game saved."
 	end
 
-	def process_guess(guess) # Remove?
-		unless @hidden_word.include? "_"
-			"You've got it! The word was #{@target}!"
-		else
-			enter_guess(guess)
-		end
-	end
 
 	def choose_letter(guess)
 		pos = 0
@@ -152,18 +124,14 @@ class Hangman
 		end
 	end
 
-	# Add all this to the html? Idk
 	def check_against_target(guess, pos)
 		if guess == "save"
 			save_game
 		elsif @target.include? guess
 			update_hidden_word(guess, pos)
-			#"Correct!"
 		else
 			@tries += 1
-			#"Sorry, that guess is incorrect!"
 		end
-		#"You've got it! The word was #{@target}!" unless @hidden_word.include? "_"
 	end
 
 	def update_hidden_word(guess, pos)
@@ -176,7 +144,6 @@ class Hangman
 			pos += 1
 		end
 	end
-
 
 	def to_json
 		saved_game = File.open("saved_game.json", "w")
@@ -197,70 +164,12 @@ class Hangman
 		save.hidden_word = data['hidden_word']
 		save
 	end
-
-	def self.play_again? # Remove?
-		puts "Would you like to play again? (Y/N)"
-		answer = gets.chomp.downcase
-		if answer[0] == "y"
-			self.new.run_game
-		elsif answer[0] == "n"
-			puts "Thanks for playing!"
-			exit
-		else
-			puts "Sorry, unable to recognize your response."
-			self.play_again?
-		end
-	end
 end
-
-
-
-#Hangman.load_game?
 
 
 
 
 
 =begin
-
-		elsif @target == guess
-			while pos < @target.length
-				@hidden_word[pos].sub!("_", guess[pos]) if @target[pos] == guess[pos]
-				pos += 1
-			end
-		elsif @target.include? guess
-			puts "Correct!"
-			while pos < @target.length
-				@hidden_word[pos].sub!("_", guess) if @target[pos] == guess
-				pos += 1
-			end
-
-Other possible changes:
--Refactoring/cleaning up code
--Actual Hangman
--Have game check if saved game already exists first
-
-_________
-|		|
-|	   ( )
-|      \|/
-|		|
-|		|
-|      / \
-|
-----------
-
-
-to start:
-_________
-|		
-|	   
-|      
-|		
-|		
-|      
-|
-----------
-
 
 =end

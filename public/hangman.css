@@ -1,5 +1,5 @@
 body {
-	background-color: #94d7e8;
+	background-color: #92e5d3;
 	font-family: arial;
 }
 
@@ -10,10 +10,31 @@ body {
 	border-radius: 5px;
 }
 
+.message {
+	font-weight: bold;
+	margin: 10px 0px 25px 75px;
+}
+
 .guessbox {
+	display: inline-block;
 	background-color: white;
-	width: 400px;
-	padding: 10px;
-	margin-top: 30px;
+	padding: 20px;
+	margin: 10px;
 	border-radius: 5px;
+}
+
+div.guessbox {
+	float: left;
+	margin-top: 150px;
+	width: 300px;
+}
+
+#hidden-word {
+	font-weight: bold;
+	text-align: center; 
+	padding-bottom: 5px;
+}
+
+#game-box {
+	margin-left: 100px
 }
