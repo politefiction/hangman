@@ -19,13 +19,13 @@
 	<% if game %>
 		<p><%= @message2 if @message2 %></p>
 		<br>
-		<img src="images/<%= @image %>">
-		<p><%= @files %></p>
+		<img src="<%= @image %>">
+		<p>Current image: <%= @image %></p>
 		<br>
 		<div class="guessbox">
 			<% game.hide_word if game.hidden_word.empty? %>
 			<p><%= game.hidden_word.join(" ") %></p>
-			<% if game.tries > 0 %>
+			<% if game.tries < 6 %>
 				<p>Please enter a letter:
 					<form action="/" method="post">
 						<input type="text" name="guess" value="<%= @guess %>">
@@ -36,10 +36,10 @@
 			<br>
 			<% if !game.hidden_word.include? "_" %>
 				<p>You've got it! The correct word was "<%= game.target %>"!</p>
-			<% elsif game.tries == 0 %>
+			<% elsif game.tries == 6 %>
 				<p>Sorry, the correct word was "<%= game.target %>"!</p>
 			<% else %>
-				<p>Incorrect guesses remaining: <%= game.tries %></p>
+				<p>Incorrect guesses: <%= game.tries %></p>
 				<% unless game.already_guessed.empty? %>
 					<p>Letters guessed: <%= game.already_guessed.join(", ") %></p>
 				<% end %>

@@ -12,6 +12,7 @@ get '/' do
 	@message2 = session.delete(:message)
 	settings.game ||= start_game(@answer1) if @answer1
 	@answer2 = params["answer2"]
+	select_image if settings.game
 	play_again?(@answer2) if @answer2
 	erb :index , :locals => { :game => settings.game }
 end
@@ -31,6 +32,7 @@ post '/' do
 	@game = settings.game
 	@game.enter_guess(@guess)
 	session[:message] = assign_message
+	#@image = "images/hangman0.jpg"
 	unless @guess == "save" or @game.already_guessed.include? @guess
 		@game.already_guessed << @guess 
 	end
@@ -52,14 +54,16 @@ def assign_message
 end
 
 def select_image
-	files = Dir.entries("public/images")
-	files.select! { |file| file.include? "hangman"}.sort!
-	@image = files[0]
+	files = Dir.entries("public/images").select { |file| file.include? "hangman" }
+	files.sort!
+	files.each_with_index do |file, ind|
+		@image = "images/#{file}" if ind == settings.game.tries
+	end
 end
 
 def game_over?
 	if settings.game
-		if (settings.game.tries == 0) or (!settings.game.hidden_word.include? "_")
+		if (settings.game.tries == 6) or (!settings.game.hidden_word.include? "_")
 			true
 		else
 			false
@@ -73,6 +77,7 @@ def play_again?(answer)
 	if answer == "yes"
 		@message1 = "New game loaded."
 		settings.game = Hangman.new 
+		select_image
 	else
 		@message3 = "Thanks for playing!"
 	end
@@ -86,7 +91,7 @@ class Hangman
 
 	def initialize
 		@target = @@hm_words.sample.strip.downcase
-		@tries = 6
+		@tries = 0
 		@already_guessed = []
 		@hidden_word = []
 	end
@@ -140,7 +145,7 @@ class Hangman
 	end
 
 	def enter_guess(guess)
-		if @tries > 0
+		if @tries < 6
 			choose_letter(guess)
 		else # Do I need this?
 			"Sorry, the correct word was #{@target}!"
@@ -155,7 +160,7 @@ class Hangman
 			update_hidden_word(guess, pos)
 			#"Correct!"
 		else
-			@tries -= 1
+			@tries += 1
 			#"Sorry, that guess is incorrect!"
 		end
 		#"You've got it! The word was #{@target}!" unless @hidden_word.include? "_"
