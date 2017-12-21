@@ -34,6 +34,7 @@ post '/' do
 	session[:message] = assign_message
 	unless @guess == "save" or @game.already_guessed.include? @guess
 		@game.already_guessed << @guess 
+		@game.already_guessed -= [""]
 	end
 	redirect "/?guess=#{@guess}" if @guess
 end
@@ -44,7 +45,9 @@ def assign_message
 	elsif @game.already_guessed.include? @guess
 		"Sorry, already guessed! Please try again."
 	else 
-		if @game.target.include? @guess 
+		if @guess.empty?
+			"Oops, you forgot to enter a guess!"
+		elsif @game.target.include? @guess 
 			"Correct!"
 		else
 			"Sorry, that guess is incorrect!"

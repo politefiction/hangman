@@ -1,18 +1,27 @@
 body {
-	background-color: #92e5d3;
+	background-color: #0f778e;
 	font-family: arial;
+	color: white;
+}
+
+h1 {
+	margin: 20px 0px 30px 327px;
 }
 
 .begin {
 	background-color: white;
 	width: 300px;
 	padding: 10px;
+	margin-left: 325px;
 	border-radius: 5px;
+	text-align: center;
+	color: black;
 }
 
 .message {
 	font-weight: bold;
-	margin: 10px 0px 25px 75px;
+	padding-top: 10px;
+	margin: 20px 0px 25px 100px;
 }
 
 .guessbox {
@@ -27,14 +36,24 @@ div.guessbox {
 	float: left;
 	margin-top: 150px;
 	width: 300px;
+	color: black;
 }
 
 #hidden-word {
 	font-weight: bold;
+	font-size: 20px;
 	text-align: center; 
 	padding-bottom: 5px;
 }
 
 #game-box {
-	margin-left: 100px
+	margin-left: 100px;
+}
+
+.play-again {
+	margin-left: 250px;
+	margin-top: 20px;
+	width: 300px;
+	font-size: 18px;
+	text-align: center;
 }
